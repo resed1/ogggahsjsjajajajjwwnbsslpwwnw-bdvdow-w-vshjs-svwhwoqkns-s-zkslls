@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newChatButton = document.getElementById('newChatButton');
     const suggestionGrid = document.getElementById('suggestionGrid');
     const suggestionCards = document.querySelectorAll('.suggestion-card');
+    const mainContainer = document.querySelector('.main-container'); // Added this
 
     let isGenerating = false;
     let assistantResponseTimeout = null;
@@ -169,7 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Event Listeners ---
-    menuButton.addEventListener('click', toggleSidebar);
+    menuButton.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent click from closing sidebar immediately
+        toggleSidebar();
+    });
     newChatButton.addEventListener('click', startNewChat);
 
     textarea.addEventListener('input', autoResize);
@@ -199,7 +203,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (copyBtn) {
             const textToCopy = copyBtn.closest('.message-wrapper').querySelector('.message').textContent;
             navigator.clipboard.writeText(textToCopy).then(() => {
-                // You can add a small notification here if you want
                 console.log('Copied to clipboard!');
             }).catch(err => {
                 console.error('Failed to copy: ', err);
@@ -209,6 +212,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (editBtn) {
             const messageToEditElement = editBtn.closest('.message-wrapper').querySelector('.message');
             startEdit(messageToEditElement);
+        }
+    });
+
+    // New: Close sidebar when clicking outside
+    document.addEventListener('click', (e) => {
+        const isClickInsideSidebar = sidebar.contains(e.target);
+        const isClickOnMenuButton = menuButton.contains(e.target);
+
+        if (sidebar.classList.contains('visible') && !isClickInsideSidebar && !isClickOnMenuButton) {
+            toggleSidebar();
         }
     });
 });
