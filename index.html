@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avocado - مساعدك المحامي</title>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap');
+
+        body {
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            background: linear-gradient(135deg, 
+                rgba(135, 206, 235, 0.015) 0%, 
+                rgba(173, 216, 230, 0.02) 50%, 
+                rgba(240, 248, 255, 0.025) 100%);
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Header --- */
+        .header {
+            height: 60px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.8));
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(135, 206, 235, 0.1);
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            justify-content: space-between;
+            position: relative;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .menu-button, .new-chat-button {
+            background: transparent; border: 1px solid rgba(135, 206, 235, 0.2);
+            border-radius: 8px; width: 40px; height: 40px; display: flex;
+            justify-content: center; align-items: center; cursor: pointer;
+            font-size: 1.3rem; color: #555; transition: all 0.2s ease;
+        }
+        .menu-button:hover, .new-chat-button:hover {
+            background: rgba(135, 206, 250, 0.1); border-color: rgba(135, 206, 235, 0.3);
+        }
+        .login-button {
+            background-color: #111;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            transition: background-color 0.2s ease;
+        }
+        .login-button:hover {
+            background-color: #333;
+        }
+
+
+        /* --- Sidebar --- */
+        .sidebar {
+            position: fixed; top: 0; right: 0; width: 50%; height: 100vh; /* Changed height */
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.98) 0%, rgba(241, 245, 249, 0.95) 100%);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-left: 1px solid rgba(135, 206, 235, 0.15);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 200; /* Above header */
+            display: flex;
+            flex-direction: column;
+            /* Removed border-bottom-left-radius and border-bottom */
+        }
+        .sidebar.visible { transform: translateX(0); }
+        .sidebar-top-actions {
+            padding: 15px; border-bottom: 1px solid rgba(135, 206, 235, 0.1);
+        }
+        .subscribe-button {
+            width: 100%; background: linear-gradient(45deg, #3a7bd5, #00d2ff); color: white;
+            border: none; border-radius: 8px; padding: 10px; font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            cursor: pointer; transition: all 0.2s ease; font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+        .subscribe-button:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0, 150, 255, 0.2); }
+        .subscribe-button i { font-size: 1.2rem; }
+
+        .sidebar-header {
+            padding: 15px 20px 10px; display: flex; align-items: center; justify-content: space-between;
+        }
+        .sidebar-title { font-size: 1.1rem; font-weight: 500; color: #333; }
+        .sidebar-search-container { position: relative; padding: 0 20px 15px; }
+        .sidebar-search-input {
+            width: 100%; padding: 8px 35px 8px 12px; border-radius: 8px;
+            border: 1px solid rgba(135, 206, 235, 0.2);
+            background: rgba(255, 255, 255, 0.7); outline: none;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+        }
+        .sidebar-search-container .bx-search {
+            position: absolute; top: 50%; transform: translateY(-50%); right: 30px; color: #888;
+        }
+        .sidebar-bottom {
+            margin-top: auto; padding: 15px; display: flex; align-items: center;
+            justify-content: space-between; border-top: 1px solid rgba(135, 206, 235, 0.1);
+        }
+        .user-account { display: flex; align-items: center; gap: 10px; color: #444; }
+        .user-account i { font-size: 1.5rem; }
+        .logout-button {
+            background: none; border: none; font-size: 1.5rem; color: #777;
+            cursor: pointer; transition: color 0.2s ease;
+        }
+        .logout-button:hover { color: #c0392b; }
+
+        /* --- Main Content --- */
+        .main-container { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .welcome-content {
+            flex-grow: 1; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; transition: all 0.3s ease; padding: 20px; overflow-y: auto;
+        }
+        .welcome-content.hidden { display: none; }
+        .welcome-logo { width: 80px; margin-bottom: 20px; }
+        .welcome-title { font-size: 1.2rem; font-weight: 500; color: #34495e; text-align: center; }
+        .welcome-content h1, .welcome-content h2, .welcome-content span { display: none; }
+
+        /* --- Suggestion Cards (Now above input) --- */
+        .suggestion-grid {
+            display: flex; flex-wrap: nowrap; gap: 12px; width: 100%;
+            max-width: 90%; margin: 0 auto; overflow-x: auto;
+            padding: 5px 0 10px 0; margin-bottom: 15px; scrollbar-width: thin;
+            scrollbar-color: rgba(135, 206, 235, 0.4) transparent; transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .suggestion-grid.hidden { opacity: 0; transform: translateY(20px); height: 0; padding: 0; margin-bottom: 0; pointer-events: none; }
+        .suggestion-grid::-webkit-scrollbar { height: 5px; }
+        .suggestion-grid::-webkit-scrollbar-thumb {
+            background-color: rgba(135, 206, 235, 0.4); border-radius: 10px;
+        }
+        .suggestion-card {
+            background: rgba(255, 255, 255, 0.7); border: 1px solid rgba(135, 206, 235, 0.15);
+            border-radius: 10px; padding: 10px; flex: 0 0 140px; display: flex;
+            flex-direction: column; align-items: center; justify-content: center; text-align: center;
+            cursor: pointer; transition: all 0.2s ease; font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 0.75rem; color: #444;
+        }
+        .suggestion-card:hover { transform: translateY(-3px); box-shadow: 0 3px 12px rgba(135, 206, 235, 0.1); }
+        .suggestion-card i { font-size: 1.6rem; margin-bottom: 5px; color: #34495e; }
+
+        /* --- Chat Area --- */
+        .chat-area { flex-grow: 1; padding: 20px; overflow-y: auto; display: none; }
+        .chat-area.visible { display: block; }
+        .message-wrapper { display: flex; flex-direction: column; margin-bottom: 15px; max-width: 90%; }
+        .user-wrapper { align-items: flex-end; margin-left: auto; }
+        .assistant-wrapper { align-items: flex-start; display: flex; gap: 10px; margin-right: auto;}
+        .assistant-avatar { width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0; margin-top: 25px; }
+        .message-content-wrapper { display: flex; flex-direction: column; width: 100%; }
+        .assistant-name { font-size: 0.8rem; font-weight: 500; color: #333; margin-bottom: 4px; }
+        .message {
+            padding: 15px 20px; border-radius: 16px; width: fit-content; max-width: 100%;
+            line-height: 1.5; animation: slideIn 0.3s ease; position: relative;
+        }
+        .message.user {
+            background: linear-gradient(135deg, rgba(135, 206, 250, 0.15), rgba(173, 216, 230, 0.18));
+            border-bottom-right-radius: 4px; margin-left: auto;
+        }
+        .message.assistant {
+            background: rgba(255, 255, 255, 0.8); border-bottom-left-radius: 4px;
+            border: 1px solid rgba(135, 206, 235, 0.1);
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Action Bar for Messages --- */
+        .action-bar { display: flex; gap: 8px; padding: 8px 10px 0; }
+        .user-wrapper .action-bar { justify-content: flex-end; }
+        .assistant-wrapper .action-bar { justify-content: flex-start; }
+        .action-bar button {
+            background: none; border: none; color: #777; font-size: 1.1rem;
+            cursor: pointer; transition: color 0.2s;
+        }
+        .action-bar button:hover { color: #333; }
+
+        /* --- Input Area --- */
+        .input-container {
+            padding: 0 20px 20px; max-width: 800px; margin: 0 auto;
+            width: 100%; flex-shrink: 0; display: flex; flex-direction: column; align-items: center;
+        }
+        .input-wrapper { position: relative; padding: 2px; border-radius: 25px; transition: all 0.3s ease; width: 100%; }
+        .input-wrapper::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 25px; background: linear-gradient(45deg, rgba(135, 206, 250, 0.3), rgba(173, 216, 230, 0.4));
+            opacity: 0; transition: opacity 0.3s ease; z-index: 0;
+        }
+        .input-wrapper.focused::before { opacity: 1; }
+        .input-bar {
+            position: relative; z-index: 1; background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.8));
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 23px; padding: 8px;
+            display: flex; align-items: flex-start; box-shadow: 0 2px 15px rgba(135, 206, 235, 0.1);
+            border: 1px solid #d1d5db;
+        }
+        .input-content { flex-grow: 1; display: flex; flex-direction: column; }
+        
+        .send-button {
+            background: #111; color: white; border: none; border-radius: 19px;
+            width: 38px; height: 38px; display: flex; justify-content: center;
+            align-items: center; cursor: pointer; font-size: 1.5rem;
+            margin-left: 8px; transition: all 0.2s ease; flex-shrink: 0;
+        }
+        .send-button:hover:not(:disabled) { background: #333; transform: scale(1.05); }
+        .send-button.stop-generation { background: #c0392b; }
+        
+        .chat-textarea {
+            flex-grow: 1; border: none; outline: none; background: transparent; padding: 8px 15px; font-size: 1rem;
+            font-family: 'IBM Plex Sans Arabic', sans-serif; color: #333; resize: none; line-height: 1.4;
+            max-height: 150px; overflow-y: auto;
+        }
+        .chat-textarea::placeholder { color: #999; }
+        .disclaimer {
+            text-align: center; font-size: 0.75rem; color: #888; margin-top: 12px; opacity: 0.8;
+            max-width: 800px; width: 100%;
+        }
+
+        /* Removed Subscription Modal CSS */
+
+        @media (max-width: 768px) {
+             .sidebar { width: 80%; }
+             .welcome-title { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="login.html" class="login-button">تسجيل الدخول</a>
+        <div class="header-right">
+            <button class="menu-button" onclick="toggleSidebar()"><i class='bx bx-menu'></i></button>
+            <button class="new-chat-button" onclick="startNewChat()"><i class='bx bx-plus'></i></button>
+        </div>
+    </div>
+
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-top-actions">
+            <a href="pro.html" style="text-decoration: none;">
+                <button class="subscribe-button">
+                    <i class='bx bx-crown'></i><span>اشترك الآن</span>
+                </button>
+            </a>
+        </div>
+        <div class="sidebar-header">
+            <h3 class="sidebar-title">المحادثات</h3>
+        </div>
+        <div class="sidebar-search-container">
+            <i class='bx bx-search'></i>
+            <input type="search" placeholder="البحث في المحادثات..." class="sidebar-search-input">
+        </div>
+        <div class="sidebar-bottom">
+            <div class="user-account">
+                <i class='bx bx-user-circle'></i>
+                <span>حسابك</span>
+            </div>
+            <button class="logout-button" title="تسجيل الخروج">
+                <i class='bx bx-log-out'></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="welcome-content" id="welcomeContent">
+             <img src="https://i.postimg.cc/9X6V69zR/Photoroom.png" alt="Avocado Logo" class="welcome-logo">
+             <p class="welcome-title">Avocado - مساعدك المحامي الذكي</p>
+        </div>
+
+        <div class="chat-area" id="chatArea"></div>
+
+        <div class="input-container">
+            <div class="suggestion-grid" id="suggestionGrid">
+                <button class="suggestion-card" data-icon="<i class='bx bxs-file-doc'></i>">
+                    <i class='bx bxs-file-doc'></i><span>مولد العرائض الذكي</span>
+                </button>
+                <button class="suggestion-card" data-icon="<i class='bx bx-notepad'></i>">
+                    <i class='bx bx-notepad'></i><span>صياغة العقود</span>
+                </button>
+                <button class="suggestion-card" data-icon="<i class='bx bxs-report'></i>">
+                    <i class='bx bxs-report'></i><span>محلل المحاضر الذكي</span>
+                </button>
+                <button class="suggestion-card" data-icon="<i class='bx bx-search-alt'></i>">
+                    <i class='bx bx-search-alt'></i><span>البحث القانوني المتخصص</span>
+                </button>
+            </div>
+
+            <div class="input-wrapper" id="inputWrapper">
+                <div class="input-bar">
+                    <div class="input-content">
+                        <textarea class="chat-textarea" id="chatInput" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+                    </div>
+                    <button class="send-button" id="sendButton"><i class='bx bx-up-arrow-alt'></i></button>
+                </div>
+            </div>
+            <p class="disclaimer">قد يعرض Avocado معلومات خاطئة لذلك ننصحك بالتحقق من ردوده.</p>
+        </div>
+    </div>
+
+    <script>
+        const textarea = document.getElementById('chatInput');
+        const inputWrapper = document.getElementById('inputWrapper');
+        const sendButton = document.getElementById('sendButton');
+        const chatArea = document.getElementById('chatArea');
+        const welcomeContent = document.getElementById('welcomeContent');
+        const sidebar = document.getElementById('sidebar');
+        const suggestionGrid = document.getElementById('suggestionGrid');
+        const suggestionCards = document.querySelectorAll('.suggestion-card');
+        
+        // Removed subscriptionModal constant
+
+        let isGenerating = false;
+        let assistantResponseTimeout = null;
+        let messageToEdit = null;
+
+        const ICONS = {
+            send: "<i class='bx bx-up-arrow-alt'></i>",
+            stop: "<i class='bx bx-stop'></i>",
+            edit: "<i class='bx bx-check'></i>"
+        };
+        
+        function autoResize() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        }
+
+        function toggleSidebar() { sidebar.classList.toggle('visible'); }
+        
+        // Removed show/hide subscription modal functions and its event listener
+        
+        function startNewChat() {
+            chatArea.innerHTML = '';
+            welcomeContent.classList.remove('hidden');
+            chatArea.classList.remove('visible');
+            suggestionGrid.classList.remove('hidden');
+            resetInputArea();
+        }
+
+        function addMessage(content, type) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `message-wrapper ${type}-wrapper`;
+            
+            let messageDiv;
+            let actionBar = document.createElement('div');
+            actionBar.className = 'action-bar';
+
+            if (type === 'assistant') {
+                const avatar = document.createElement('img');
+                avatar.src = 'https://i.postimg.cc/9X6V69zR/Photoroom.png';
+                avatar.alt = 'Avocado Avatar';
+                avatar.className = 'assistant-avatar';
+                wrapper.appendChild(avatar);
+
+                const contentWrapper = document.createElement('div');
+                contentWrapper.className = 'message-content-wrapper';
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'assistant-name';
+                nameSpan.textContent = 'Avocado';
+                contentWrapper.appendChild(nameSpan);
+
+                messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.textContent = content;
+                contentWrapper.appendChild(messageDiv);
+                
+                actionBar.innerHTML = `
+                    <button class="action-btn-copy" title="نسخ"><i class='bx bx-copy'></i></button>
+                    <button title="مشاركة"><i class='bx bx-share-alt'></i></button>
+                    <button title="إعجاب"><i class='bx bx-like'></i></button>
+                `;
+                contentWrapper.appendChild(actionBar);
+                wrapper.appendChild(contentWrapper);
+
+            } else { // User
+                messageDiv = document.createElement('div');
+                messageDiv.className = `message ${type}`;
+                messageDiv.textContent = content;
+                wrapper.appendChild(messageDiv);
+
+                actionBar.innerHTML = `
+                    <button class="action-btn-copy" title="نسخ"><i class='bx bx-copy'></i></button>
+                    <button class="action-btn-edit" title="تعديل"><i class='bx bx-pencil'></i></button>
+                `;
+                wrapper.appendChild(actionBar);
+            }
+
+            chatArea.appendChild(wrapper);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+
+        function startChatMode() {
+            welcomeContent.classList.add('hidden');
+            chatArea.classList.add('visible');
+            suggestionGrid.classList.add('hidden');
+        }
+        
+        function updateSendButton(state) {
+            sendButton.innerHTML = ICONS[state];
+            if (state === 'stop') {
+                sendButton.classList.add('stop-generation');
+            } else {
+                sendButton.classList.remove('stop-generation');
+            }
+        }
+
+        function resetInputArea() {
+            textarea.value = '';
+            autoResize.call(textarea);
+            messageToEdit = null;
+            if (isGenerating) stopGeneration();
+            updateSendButton('send');
+        }
+
+        function startEdit(messageElement) {
+            messageToEdit = messageElement;
+            textarea.value = messageElement.textContent;
+            textarea.focus();
+            autoResize.call(textarea);
+            updateSendButton('edit');
+        }
+
+        function saveEdit() {
+            if (!messageToEdit) return;
+            const newContent = textarea.value.trim();
+            if (newContent) {
+                messageToEdit.textContent = newContent;
+            }
+            resetInputArea();
+        }
+
+        function stopGeneration() {
+            if (assistantResponseTimeout) {
+                clearTimeout(assistantResponseTimeout);
+                assistantResponseTimeout = null;
+            }
+            isGenerating = false;
+            updateSendButton('send');
+        }
+
+        function handleSend() {
+            if (isGenerating) {
+                stopGeneration();
+                return;
+            }
+
+            if (messageToEdit) {
+                saveEdit();
+                return;
+            }
+
+            const message = textarea.value.trim();
+            if (!message) return;
+
+            if (!chatArea.classList.contains('visible')) startChatMode();
+            
+            addMessage(message, 'user');
+            resetInputArea();
+
+            isGenerating = true;
+            updateSendButton('stop');
+
+            assistantResponseTimeout = setTimeout(() => {
+                addMessage('هذا رد تجريبي من Avocado للتحقق من التصميم. يمكنك تجربة أزرار النسخ والتعديل والإعجاب.', 'assistant');
+                isGenerating = false;
+                updateSendButton('send');
+            }, 2000);
+        }
+
+        textarea.addEventListener('input', autoResize);
+        textarea.addEventListener('focus', () => inputWrapper.classList.add('focused'));
+        textarea.addEventListener('blur', () => inputWrapper.classList.remove('focused'));
+
+        sendButton.addEventListener('click', handleSend);
+        textarea.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+
+        suggestionCards.forEach(card => {
+            card.addEventListener('click', () => {
+                textarea.value = card.querySelector('span').textContent;
+                textarea.focus();
+                autoResize.call(textarea);
+            });
+        });
+
+        chatArea.addEventListener('click', (e) => {
+            const copyBtn = e.target.closest('.action-btn-copy');
+            const editBtn = e.target.closest('.action-btn-edit');
+
+            if (copyBtn) {
+                const textToCopy = copyBtn.closest('.message-wrapper').querySelector('.message').textContent;
+                navigator.clipboard.writeText(textToCopy).then(() => alert('تم النسخ!'));
+            }
+
+            if (editBtn) {
+                const messageToEditElement = editBtn.closest('.message-wrapper').querySelector('.message');
+                startEdit(messageToEditElement);
+            }
+        });
+    </script>
+</body>
+</html>
