@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login.html</title>
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
+    <link rel="stylesheet" href="login.css">
+</head>
+<body>
+
+    <div id="loginPage" class="page active">
+        <header class="auth-header">
+            <img src="https://i.postimg.cc/9X6V69zR/Photoroom.png" alt="Avocado Logo" class="logo">
+            <h1>مساعدك القانوني الذكي</h1>
+            <p>ابدأ رحلتك نحو ممارسة قانونية أكثر كفاءة</p>
+        </header>
+
+        <main class="auth-main">
+            <input type="email" id="emailInput" class="input-field" placeholder="عنوان البريد الإلكتروني" required>
+            <button type="submit" id="emailSubmit" class="submit-button">متابعة</button>
+
+            <div class="separator">أو</div>
+
+            <button id="googleLogin" class="social-button">
+                <i class='bx bxl-google icon'></i>
+                <span>المتابعة باستخدام Google</span>
+            </button>
+            <button id="phoneLogin" class="social-button">
+                <i class='bx bx-phone icon'></i>
+                <span>المتابعة باستخدام رقم الهاتف</span>
+            </button>
+        </main>
+    </div>
+
+    <div id="emailVerificationPage" class="page">
+        <header class="auth-header">
+            <img src="https://i.postimg.cc/9X6V69zR/Photoroom.png" alt="Avocado Logo" class="logo">
+            <h1>تحقق من بريدك الإلكتروني</h1>
+            <p>لقد أرسلنا رابط التحقق إلى البريد الإلكتروني المسجل</p>
+        </header>
+        <main class="auth-main">
+            <div class="success-message">
+                <i class='bx bx-check-circle'></i>
+                <span>تم إرسال رابط التحقق بنجاح</span>
+            </div>
+            <button id="proceedToIndex" class="submit-button">
+                الانتقال إلى الصفحة الرئيسية
+                <i class='bx bx-arrow-left'></i>
+            </button>
+        </main>
+    </div>
+
+    <div id="phoneLoginPage" class="page">
+        <header class="auth-header">
+            <img src="https://i.postimg.cc/9X6V69zR/Photoroom.png" alt="Avocado Logo" class="logo">
+            <h1>تسجيل الدخول برقم الهاتف</h1>
+            <p>أدخل رقم هاتفك لتلقي رمز التحقق</p>
+        </header>
+        <main class="auth-main">
+            <div class="phone-input-container">
+                <div class="country-code">
+                    <div class="egypt-flag"></div>
+                    <span>+20</span>
+                </div>
+                <input type="tel" id="phoneInput" class="input-field phone-input" placeholder="رقم الهاتف" required>
+            </div>
+            <button id="phoneSubmit" class="submit-button">إكمال</button>
+        </main>
+    </div>
+
+    <div id="phoneVerificationPage" class="page">
+        <header class="auth-header">
+            <img src="https://i.postimg.cc/9X6V69zR/Photoroom.png" alt="Avocado Logo" class="logo">
+            <h1>تحقق من رقم الهاتف</h1>
+            <p>أدخل رمز التحقق المرسل إلى رقم هاتفك</p>
+        </header>
+        <main class="auth-main">
+            <div class="verification-inputs">
+                <input type="text" class="verification-input" maxlength="1">
+                <input type="text" class="verification-input" maxlength="1">
+                <input type="text" class="verification-input" maxlength="1">
+                <input type="text" class="verification-input" maxlength="1">
+            </div>
+            <button id="verifyPhone" class="submit-button">تحقق</button>
+        </main>
+    </div>
+
+    <div id="privacyPolicyPage" class="full-page">
+        <button class="back-button" onclick="closePage('privacyPolicyPage')"><i class='bx bx-x'></i></button>
+        <div class="full-page-content">
+            </div>
+    </div>
+
+    <div id="termsOfServicePage" class="full-page">
+        <button class="back-button" onclick="closePage('termsOfServicePage')"><i class='bx bx-x'></i></button>
+        <div class="full-page-content">
+            </div>
+    </div>
+    
+    <div class="auth-footer">
+        <p>
+            <a onclick="openPage('privacyPolicyPage')">سياسة الخصوصية</a>
+            |
+            <a onclick="openPage('termsOfServicePage')">شروط الاستخدام</a>
+        </p>
+        <p>© 2025 Avocado. جميع الحقوق محفوظة.</p>
+    </div>
+
+    <script src="login.js"></script>
+</body>
+</html>
