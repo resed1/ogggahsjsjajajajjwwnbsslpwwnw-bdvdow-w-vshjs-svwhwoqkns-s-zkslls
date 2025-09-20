@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type === 'assistant') {
             const avatar = document.createElement('img');
             avatar.src = 'https://i.postimg.cc/9X6V69zR/Photoroom.png';
-            avatar.alt = 'Avocado Avatar';
+            avatar.alt = 'Afnan Avatar';
             avatar.className = 'assistant-avatar';
             wrapper.appendChild(avatar);
 
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const nameSpan = document.createElement('span');
             nameSpan.className = 'assistant-name';
-            nameSpan.textContent = 'Avocado';
+            nameSpan.textContent = 'Afnan';
             contentWrapper.appendChild(nameSpan);
 
             messageDiv = document.createElement('div');
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSendButton('stop');
 
         assistantResponseTimeout = setTimeout(() => {
-            addMessage('هذا رد تجريبي من Avocado للتحقق من التصميم. يمكنك تجربة أزرار النسخ والتعديل والإعجاب.', 'assistant');
+            addMessage('هذا رد تجريبي من Afnan للتحقق من التصميم. يمكنك تجربة أزرار النسخ والتعديل والإعجاب.', 'assistant');
             isGenerating = false;
             updateSendButton('send');
         }, 2000);
